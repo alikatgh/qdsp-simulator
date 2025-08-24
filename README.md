@@ -1,7 +1,7 @@
-# DSPsim — Educational, Clean-Room Qualcomm-Style DSP Simulator
+# Qualcomm-Style DSP Simulator
 
 
-**DSPsim** is a from-scratch, learn-by-instrumentation simulator for a packeted, predicated DSP core. It is **not** Qualcomm Hexagon, and includes only an original instructional ISA that is Hexagon-inspired at the concept level.
+**DSPsim** is a from-scratch, packeted, predicated DSP core. It is **not** Qualcomm Hexagon, and includes only an original instructional ISA that is Hexagon-inspired at the concept level.
 
 
 ## Highlights
@@ -35,7 +35,7 @@ dspsim run --load hello.bin --trace --pretty
 dspsim run --elf build/program.elf --trace
 ```
 
-## Educational ISA (Summary)
+## Summary
 
 - Word = 32b, little-endian. All instructions are 32b.
 - Format (common header):
