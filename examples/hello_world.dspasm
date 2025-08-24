@@ -1,0 +1,5 @@
+# Simple program: R0 = 5, R1 = 7, R2 = R0 + R1
+LOAD 0 0
+LOAD 1 1
+ADD 2 0 1
+STORE 2 2
