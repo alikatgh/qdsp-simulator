@@ -1,7 +1,18 @@
 from __future__ import annotations
-
 from .bitutil import get_bits, s32
 from .isa import *
+from dataclasses import dataclass
+
+@dataclass
+class Inst:
+    op: str
+    rd: int | None = None
+    rs1: int | None = None
+    rs2: int | None = None
+    imm: int | None = None
+    pred: int | None = None
+    endpkt: bool = True
+
 
 
 def _imm14s(word: int) -> int:

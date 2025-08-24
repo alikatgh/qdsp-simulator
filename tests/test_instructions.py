@@ -1,5 +1,5 @@
 import pytest
-from dsp_sim.simulator import Simulator
+from dspsim.simulator import Simulator
 
 def test_add():
     sim = Simulator()

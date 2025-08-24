@@ -1,4 +1,7 @@
-from .core import CPU
-from .assemble import assemble_text
-from .disasm import disasm_words
-__all__ = ["CPU", "assemble_text", "disasm_words"]
+# __init__.py
+from . import assembler
+from . import encoder
+from . import decoder
+from . import core_cycle
+
+__all__ = ["assembler", "encoder", "decoder", "core_cycle"]
