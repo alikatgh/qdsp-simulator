@@ -1,11 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
 [project]
-name = "qdsp-sim"
-version = "0.1.0"
-description = "Educational VLIW DSP Simulator"
-authors = [{ name = "Your Name", email = "you@example.com" }]
-requires-python = ">=3.8"
+name = "dspsim"
+version = "0.2.0"
+description = "Clean-room educational DSP simulator: predication, packets, MMIO, assembler, ELF loader"
+readme = "README.md"
+authors = [{ name = "Your Name" }]
+requires-python = ">=3.9"
+dependencies = [
+"click>=8",
+"pyelftools>=0.31; extra == 'elf'",
+"rich>=13; extra == 'pretty'",
+]
+
+
+[project.optional-dependencies]
+elf = ["pyelftools>=0.31"]
+pretty = ["rich>=13"]
+
+
+data-files = []
+
+
+[project.scripts]
+dspsim = "dspsim.cli:main"
+
 
 [tool.pytest.ini_options]
-pythonpath = [
-  "."
-]
+pythonpath = ["src"]
+addopts = "-q"

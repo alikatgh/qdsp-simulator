@@ -1,8 +1,13 @@
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.DS_Store
 .venv/
-.env/
-*.log
+.env
+.build/
 dist/
 build/
+.eggs/
+.idea/
+.vscode/
+*.log
+*.bin
