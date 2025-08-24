@@ -55,13 +55,4 @@ The goal is transparency: you can instrument every side-effect.
 
 ## License
 
-```text
 MIT License
-
-
-Copyright (c) 2025 Your Name
-
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-... (standard MIT text) ...
-```
