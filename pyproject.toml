@@ -2,33 +2,47 @@
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "dspsim"
-version = "0.2.0"
-description = "Clean-room educational DSP simulator: predication, packets, MMIO, assembler, ELF loader"
+version = "0.2.1"
+description = "Clean-room educational DSP simulator with predication, packets, MMIO, assembler/disassembler, and optional ELF loader."
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [{ name = "Your Name" }]
 requires-python = ">=3.9"
 dependencies = [
-"click>=8",
-"pyelftools>=0.31; extra == 'elf'",
-"rich>=13; extra == 'pretty'",
+  "click>=8",
 ]
 
+keywords = ["dsp", "simulator", "assembler", "hexagon-inspired", "education"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Education",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Assemblers",
+  "Topic :: System :: Emulators",
+]
 
 [project.optional-dependencies]
 elf = ["pyelftools>=0.31"]
 pretty = ["rich>=13"]
 
-
-data-files = []
-
-
 [project.scripts]
 dspsim = "dspsim.cli:main"
-
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+select = ["E","F","I","UP","B"]

@@ -3,6 +3,14 @@
 
 # === Functional semantics (executed by simulator) ===
 
+from .isa import (
+    MAJ_ADD, MAJ_ADDI, MAJ_SUB, MAJ_AND, MAJ_OR, MAJ_XOR,
+    MAJ_SHL, MAJ_SHR, MAJ_MUL, MAJ_MAC, MAJ_NOT,
+    MAJ_LD32, MAJ_ST32,
+    MAJ_J, MAJ_JR, MAJ_HALT
+)
+
+
 def instr_add(sim, rd, rs1, rs2):
     """R[rd] = R[rs1] + R[rs2]"""
     sim.regs[rd] = (sim.regs[rs1] + sim.regs[rs2]) & 0xFFFFFFFF

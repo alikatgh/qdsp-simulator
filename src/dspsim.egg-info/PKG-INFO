@@ -1,0 +1,109 @@
+Metadata-Version: 2.4
+Name: dspsim
+Version: 0.2.1
+Summary: Clean-room educational DSP simulator with predication, packets, MMIO, assembler/disassembler, and optional ELF loader.
+Author: Your Name
+License: MIT License
+        
+        Copyright (c) 2025 [Your Name]
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Keywords: dsp,simulator,assembler,hexagon-inspired,education
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Education
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Software Development :: Assemblers
+Classifier: Topic :: System :: Emulators
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: click>=8
+Provides-Extra: elf
+Requires-Dist: pyelftools>=0.31; extra == "elf"
+Provides-Extra: pretty
+Requires-Dist: rich>=13; extra == "pretty"
+Dynamic: license-file
+
+# Qualcomm-Style DSP Simulator
+
+
+**DSPsim** is a from-scratch, packeted, predicated DSP core. It is **not** Qualcomm Hexagon, and includes only an original instructional ISA that is Hexagon-inspired at the concept level.
+
+
+## Highlights
+- 32 GPRs (R0..R31), 4 predicate bits (P0..P3), PC, cycle counter
+- **Packets**: fetch multiple 32-bit words per packet (end via EOP bit)
+- **Predication**: `@P#` guards most instructions
+- **MMIO**: UART + Timer examples
+- **Assembler/Disassembler** for the educational ISA
+- **ELF loader** (optional, via `pyelftools`)
+- **Tracing**: CSV/JSON instruction/memory traces
+- Basic **timing model** w/ functional-unit latencies
+
+
+## Install
+```bash
+pip install -e .
+```
+
+## Run Examples
+```bash
+# assemble and run
+dspsim asm examples/hello_packet.asm -o hello.bin
+dspsim run --load hello.bin --base 0x1000 --entry 0x1000 --trace
+
+
+# pretty trace (requires rich)
+dspsim run --load hello.bin --trace --pretty
+
+
+# load ELF (optional)
+dspsim run --elf build/program.elf --trace
+```
+
+## Summary
+
+- Word = 32b, little-endian. All instructions are 32b.
+- Format (common header):
+    - [31:28] MAJ (major opcode)
+    - [27] P? (predicated flag)
+    - [26:25] Pidx for predicate
+    - [24] EOP (end-of-packet)
+    - Remaining bits vary per MAJ.
+
+- Core ops: ADD, ADDI, SUB, AND, OR, XOR, SHL, SHR, MUL, MAC, NOT
+- Mem ops: LD, ST (base+imm14), alignment required to 4B for LD/ST32
+- Control: J (PC += imm<<2), JR (PC = Rs1), CMPI.{EQ,NE,LT,GE,LE,GT}
+- Predication: @P# applies to most ops (skips side-effects if false)
+- HALT: stop core
+
+The goal is transparency: you can instrument every side-effect.
+
+## License
+
+MIT License

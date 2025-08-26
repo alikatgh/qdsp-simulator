@@ -1,6 +1,5 @@
-import pytest
-from qdsp_sim.core import Simulator
-from qdsp_sim.assembler import assemble
+from dspsim.assembler import assemble
+from dspsim import FunctionalSimulator as Simulator
 
 def test_addi():
     sim = Simulator()

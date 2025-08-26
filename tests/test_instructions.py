@@ -1,5 +1,6 @@
 import pytest
-from dspsim.simulator import Simulator
+from dspsim import FunctionalSimulator as Simulator
+
 
 def test_add():
     sim = Simulator()

@@ -1,0 +1,7 @@
+click>=8
+
+[elf]
+pyelftools>=0.31
+
+[pretty]
+rich>=13

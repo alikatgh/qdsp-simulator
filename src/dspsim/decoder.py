@@ -81,3 +81,21 @@ def decode(word: int) -> Inst | None:
         return Inst("HALT", None, None, None, None, pred, end, word)
         
     return None
+
+# --- at the bottom of src/dspsim/decoder.py (add these) ---
+
+# Backwards-compatible wrapper expected by other modules:
+def decode_word(word: int, pc: int = 0):
+    """
+    Backwards-compatible wrapper: decode a 32-bit word into an Inst object.
+    Kept for modules that call decode_word(word, pc).
+    """
+    inst = decode(word)
+    # if the caller expects 'raw' and 'pc' attributes, attach them when safe
+    try:
+        inst.raw = word
+        inst.pc = pc
+    except Exception:
+        # inst might be None or not support attribute set — ignore
+        pass
+    return inst

@@ -1,7 +1,6 @@
-# __init__.py
-from . import assembler
-from . import encoder
-from . import decoder
-from . import core_cycle
+# src/dspsim/__init__.py
+from .core import FunctionalSimulator
+from .core_cycle import Core as CycleSimulator
 
-__all__ = ["assembler", "encoder", "decoder", "core_cycle"]
+__all__ = ["FunctionalSimulator", "CycleSimulator"]
+__version__ = "0.2.1"

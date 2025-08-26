@@ -141,7 +141,7 @@ def assemble_text(src: str) -> bytes:
                 pdst = int(args[0].upper().replace('P',''))
                 rs1 = parse_reg(args[1])
                 imm = parse_imm(args[2], labels, pc) & 0x3FFF
-                word = enc_cmpi(pdst, rs1, imm, code, True)
+                word = enc_cmpi(pdst, rs1, imm, code, pred, True)
             else:
                 raise AsmError("Use CMPI.<EQ|NE|LT|GE|LE|GT> Pdst,Rs1,imm")
         elif op == 'HALT':
