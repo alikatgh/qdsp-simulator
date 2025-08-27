@@ -11,3 +11,5 @@ build/
 .vscode/
 *.log
 *.bin
+*.egg-info/
+src/*.egg-info/

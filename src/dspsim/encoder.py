@@ -1,7 +1,15 @@
+# src/dspsim/encoder.py
+
 from __future__ import annotations
 
 from .bitutil import *
-from .isa import *
+# Import opcodes from the central ISA definition
+from .isa import (
+    MAJ_ADD, MAJ_ADDI, MAJ_SUB, MAJ_AND, MAJ_OR, MAJ_XOR,
+    MAJ_SHL, MAJ_SHR, MAJ_MUL, MAJ_MAC, MAJ_NOT,
+    MAJ_LD32, MAJ_ST32,
+    MAJ_J, MAJ_JR, MAJ_CMPI, MAJ_HALT
+)
 
 
 def _header(maj: int, pred: int | None = None, end: bool = True) -> int:
@@ -16,6 +24,7 @@ def _header(maj: int, pred: int | None = None, end: bool = True) -> int:
     Returns:
         An integer representing the partially built instruction word.
     """
+    # Corrected encoding: 4-bit MAJ at [31:28], P? at [27], Pidx at [26:25], EOP at [24]
     w = (maj & 0xF) << 28
     if pred is not None:
         w |= (1 << 27) | ((pred & 0x3) << 25)
@@ -27,37 +36,7 @@ def _header(maj: int, pred: int | None = None, end: bool = True) -> int:
 # Instruction Encoders
 # -----------------------------------------------------------------------------
 
-# src/dspsim/encoder.py
-
-# Arithmetic / logic
-MAJ_ADD   = 0x0
-MAJ_ADDI  = 0x1
-MAJ_SUB   = 0x2
-MAJ_AND   = 0x3
-MAJ_OR    = 0x4
-MAJ_XOR   = 0x5
-MAJ_SHL   = 0x6
-MAJ_SHR   = 0x7
-MAJ_MUL   = 0x8
-MAJ_MAC   = 0x9
-MAJ_NOT   = 0xA
-
-# Memory
-MAJ_LD32  = 0xB
-MAJ_ST32  = 0xC
-
-# Control / compare
-MAJ_J     = 0xD
-MAJ_JR    = 0xE
-MAJ_CMPI  = 0xF   # example (your compare group)
-
-# System
-MAJ_HALT  = 0x0F  # ensure unique code
-
-# backwards-compatible aliases used by assembler & tests:
-MAJ_LD32 = MAJ_LD
-MAJ_ST32 = MAJ_ST
-
+# (Opcode constants removed from here; they are now imported from isa.py)
 
 def enc_3r(maj: int, rd: int, rs1: int, rs2: int, pred: int | None = None, end: bool = True) -> int:
     """Encodes a 3-register (3R) format instruction."""

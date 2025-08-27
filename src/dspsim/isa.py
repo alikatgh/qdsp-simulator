@@ -1,15 +1,35 @@
-# isa.py
+# src/dspsim/isa.py
 # Instruction Set Architecture definitions.
 
+# === Opcode constants (encoding layer) ===
+
+# ALU
+MAJ_ADD   = 0x0
+MAJ_ADDI  = 0x1
+MAJ_SUB   = 0x2
+MAJ_AND   = 0x3
+MAJ_OR    = 0x4
+MAJ_XOR   = 0x5
+MAJ_SHL   = 0x6
+MAJ_SHR   = 0x7
+MAJ_MUL   = 0x8
+MAJ_MAC   = 0x9
+MAJ_NOT   = 0xA
+
+# Memory (using legacy names for assembler compatibility)
+MAJ_LD32  = 0xB
+MAJ_ST32  = 0xC
+MAJ_LD = MAJ_LD32
+MAJ_ST = MAJ_ST32
+
+# Control flow
+MAJ_J     = 0xD
+MAJ_JR    = 0xE
+MAJ_CMPI  = 0xF  # Note: CMPI shares a major opcode with HALT in this simplified model.
+MAJ_HALT  = 0xF  # A sub-opcode would distinguish them in a real ISA.
+
+
 # === Functional semantics (executed by simulator) ===
-
-from .isa import (
-    MAJ_ADD, MAJ_ADDI, MAJ_SUB, MAJ_AND, MAJ_OR, MAJ_XOR,
-    MAJ_SHL, MAJ_SHR, MAJ_MUL, MAJ_MAC, MAJ_NOT,
-    MAJ_LD32, MAJ_ST32,
-    MAJ_J, MAJ_JR, MAJ_HALT
-)
-
 
 def instr_add(sim, rd, rs1, rs2):
     """R[rd] = R[rs1] + R[rs2]"""
@@ -26,44 +46,19 @@ def instr_sub(sim, rd, rs1, rs2):
 def instr_ld(sim, rd, rs1, imm):
     """R[rd] = Mem[R[rs1] + imm]"""
     addr = sim.regs[rs1] + imm
-    sim.regs[rd] = sim.mem.read_word(addr)
+    sim.regs[rd] = sim.bus.read32(addr)
 
 def instr_st(sim, rs2, rs1, imm):
     """Mem[R[rs1] + imm] = R[rs2]"""
     addr = sim.regs[rs1] + imm
-    sim.mem.write_word(addr, sim.regs[rs2])
+    sim.bus.write32(addr, sim.regs[rs2])
 
 def instr_halt(sim):
     """Stop simulation"""
     sim.running = False
 
 
-# === Opcode constants (encoding layer) ===
-
-# ALU
-MAJ_ADD  = 0x0
-MAJ_ADDI = 0x1
-MAJ_SUB  = 0x2
-MAJ_AND  = 0x3
-MAJ_OR   = 0x4
-MAJ_XOR  = 0x5
-MAJ_SHL  = 0x6
-MAJ_SHR  = 0x7
-MAJ_MUL  = 0x8
-MAJ_MAC  = 0x9
-
-# Memory
-MAJ_LD   = 0xA
-MAJ_ST   = 0xB
-
-# Control flow
-MAJ_J    = 0xC
-MAJ_JR   = 0xD
-MAJ_CMPI = 0xE
-MAJ_HALT = 0xF
-
-
-# === Lookup table: mnemonic → (executor, arg types, opcode) ===
+# === Lookup table: mnemonic -> (executor, arg types, opcode) ===
 
 INSTRUCTION_SET = {
     'ADD':  (instr_add,  ('reg', 'reg', 'reg'), MAJ_ADD),
