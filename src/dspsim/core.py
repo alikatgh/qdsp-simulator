@@ -104,7 +104,14 @@ class FunctionalSimulator:
             imm = s32(imm) if (imm & 0x2000) else imm
             fn(self, rs2, rs1, imm)
             return
-
+        
+            # immediate-only form: imm[23:0] (for jumps, using 14 bits)
+        if argtypes == ('imm',):
+            imm = word & 0x3FFF
+            imm = s32(imm) if (imm & 0x2000) else imm # sign extend
+            fn(self, imm)
+            return
+        
         # HALT / no-arg
         if argtypes == ():
             fn(self)
