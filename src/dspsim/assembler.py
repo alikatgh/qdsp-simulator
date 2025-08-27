@@ -103,10 +103,17 @@ def assemble(lines: List[str]) -> List[int]:
         args = tokenize_args(args_text) if args_text else []
         word = None
 
-        if op in ('ADD', 'SUB'):
+        if op in ('ADD', 'SUB', 'AND', 'OR'):
             if len(args) != 3: raise AsmError(f"{op} needs rd,rs1,rs2")
             rd, rs1, rs2 = parse_reg(args[0]), parse_reg(args[1]), parse_reg(args[2])
-            maj = MAJ_ADD if op == 'ADD' else MAJ_SUB
+            if op == 'ADD':
+                maj = MAJ_ADD
+            elif op == 'SUB':
+                maj = MAJ_SUB
+            elif op == 'AND':
+                maj = MAJ_AND
+            elif op == 'OR':
+                maj = MAJ_OR
             word = enc_3r(maj, rd, rs1, rs2, pred, True)
         elif op == 'ADDI':
             if len(args) != 3: raise AsmError("ADDI needs rd,rs1,imm")
@@ -126,9 +133,15 @@ def assemble(lines: List[str]) -> List[int]:
             w |= (rs & 0x1F) << 9
             word = w
         elif op == 'J':
-            if len(args) != 1: raise AsmError("J needs imm_or_label")
-            imm = parse_imm(args[0], labels, pc)
-            word = enc_i(MAJ_J, imm & 0x3FFF, pred, True)
+            if len(args) != 1: raise AsmError("J needs an immediate or a label")
+            # Jumps are PC-relative. The immediate is a signed word offset.
+            target_addr = parse_imm(args[0], labels, pc)
+            # Offset is from the instruction *after* the jump
+            offset = target_addr - (pc + 4)
+            if offset % 4 != 0:
+                raise AsmError(f"Jump target {args[0]} is not word-aligned")
+            imm = (offset >> 2) & 0x3FFF # Scale offset and fit into 14 bits
+            word = enc_i(MAJ_J, imm, pred, True)
         elif op.startswith('CMPI.'):
             _, spec = op.split('.',1)
             mapping = {'EQ':0, 'NE':1, 'LT':2, 'GE':3, 'LE':4, 'GT':5}
