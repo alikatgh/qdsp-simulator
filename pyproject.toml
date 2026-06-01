@@ -38,11 +38,35 @@ pretty = ["rich>=13"]
 [project.scripts]
 dspsim = "dspsim.cli:main"
 
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "ruff>=0.6",
+  "mypy>=1.8",
+  "pyelftools>=0.31",
+  "rich>=13",
+]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+testpaths = ["tests"]
 addopts = "-q"
 
 [tool.ruff]
 line-length = 100
 target-version = "py39"
-select = ["E","F","I","UP","B"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.9"
+mypy_path = "scripts"
+ignore_missing_imports = true
+# The type-checked surface. Grow this list as more modules gain annotations.
+files = [
+  "scripts",
+  "src/dspsim/bus.py",
+  "tests/test_differential.py",
+  "tests/test_bus_faults.py",
+]

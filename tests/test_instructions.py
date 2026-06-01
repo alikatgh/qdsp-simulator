@@ -1,8 +1,8 @@
 # tests/test_instructions.py
-import pytest
 from dspsim import FunctionalSimulator as Simulator
 from dspsim.encoder import enc_3r, enc_i
 from dspsim.isa import MAJ_ADD, MAJ_HALT
+
 
 def test_add():
     sim = Simulator()

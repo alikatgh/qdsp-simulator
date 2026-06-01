@@ -1,11 +1,17 @@
-; simple loop that writes ascii letters to memory and halts
-ADDI R1, R0, 0x2000       ; base pointer
-ADDI R2, R0, 65           ; 'A'
-ADDI R3, R0, 90           ; 'Z'+1
-LOOP_START:
-CMPI.LT P0, R2, 0x5B      ; set P0 if R2 < 0x5B (91)
-J 2                       ; if not taken, skip body (we don't have conditional-j encode here; keep simple)
-ST32 [R1+0], R2
-ADDI R2, R2, 1
-J -3
+; Counting loop: sum 1+2+3+4+5 = 15
+; Uses CMPI + predicated jump for loop control
+;
+; R1 = counter (starts at 1)
+; R3 = accumulator
+; Expected: R3 = 15
+
+ADDI R1, R0, #1        ; counter = 1
+ADDI R3, R0, #0        ; sum = 0
+
+LOOP:
+ADD R3, R3, R1          ; sum += counter
+ADDI R1, R1, #1        ; counter++
+CMPI.LE P0, R1, #5     ; P0 = (counter <= 5)
+J LOOP @P0              ; if P0: loop back
 HALT
+; Result: R3 = 1+2+3+4+5 = 15 = 0x0F

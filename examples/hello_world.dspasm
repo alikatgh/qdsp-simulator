@@ -1,5 +1,15 @@
-# Simple program: R0 = 5, R1 = 7, R2 = R0 + R1
-LOAD 0 0
-LOAD 1 1
-ADD 2 0 1
-STORE 2 2
+; Hello World — writes "Hello" to UART TX at 0xFFFF0000
+; Each character is stored with a simple ST to the UART address
+ADDI R10, R0, #0x100   ; scratch area for the UART base address
+ADDI R1, R0, #72       ; 'H'
+ADDI R2, R0, #101      ; 'e'
+ADDI R3, R0, #108      ; 'l'
+ADDI R4, R0, #111      ; 'o'
+; In a real run with MMIO mapped, these would go to UART TX
+; For now, just store them sequentially in memory as a demo
+ST [R10], R1
+ST [R10+4], R2
+ST [R10+8], R3
+ST [R10+12], R3
+ST [R10+16], R4
+HALT

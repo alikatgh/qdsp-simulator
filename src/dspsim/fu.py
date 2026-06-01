@@ -1,7 +1,7 @@
 # fu.py - functional unit classes
 from dataclasses import dataclass
 from typing import Optional
-from time import time
+
 
 @dataclass
 class FU:

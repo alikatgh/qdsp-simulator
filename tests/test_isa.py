@@ -1,6 +1,7 @@
 # tests/test_isa.py
-from dspsim.assembler import assemble
 from dspsim import FunctionalSimulator as Simulator
+from dspsim.assembler import assemble
+
 
 def test_addi():
     sim = Simulator()

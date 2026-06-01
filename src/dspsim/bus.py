@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import struct
-from typing import List, Optional, Tuple
 
 from .bitutil import u32
+
+
+class MemoryFault(Exception):
+    """Raised on a misaligned or out-of-bounds 32-bit memory access."""
 
 
 class MMIO:
@@ -33,7 +36,7 @@ class Bus:
         """
         self.mem = bytearray(size)
         # Each entry is a tuple: (start_addr, end_addr_inclusive, device_obj)
-        self.mmio: List[Tuple[int, int, MMIO]] = []
+        self.mmio: list[tuple[int, int, MMIO]] = []
 
     def map_mmio(self, start: int, size: int, dev: MMIO):
         """
@@ -46,7 +49,7 @@ class Bus:
         """
         self.mmio.append((start, start + size - 1, dev))
 
-    def _mmio(self, addr: int) -> Optional[MMIO]:
+    def _mmio(self, addr: int) -> MMIO | None:
         """Finds the MMIO device responsible for a given address, if any."""
         for start, end, device in self.mmio:
             if start <= addr <= end:
@@ -61,25 +64,39 @@ class Bus:
         """
         Reads a 32-bit little-endian value from the bus.
 
-        Delegates to an MMIO device if the address is mapped;
-        otherwise, reads from main memory.
+        Delegates to an MMIO device if the address is mapped; otherwise reads
+        from main memory. Raises ``MemoryFault`` on a misaligned (non-4-byte)
+        or out-of-bounds access.
         """
+        self._check_access(addr)
         if dev := self._mmio(addr):
             return u32(dev.read32(addr))
-        else:
-            return struct.unpack_from('<I', self.mem, addr)[0]
+        return struct.unpack_from('<I', self.mem, addr)[0]
 
     def write32(self, addr: int, val: int):
         """
         Writes a 32-bit little-endian value to the bus.
 
-        Delegates to an MMIO device if the address is mapped;
-        otherwise, writes to main memory.
+        Delegates to an MMIO device if the address is mapped; otherwise writes
+        to main memory. Raises ``MemoryFault`` on a misaligned (non-4-byte) or
+        out-of-bounds access.
         """
+        self._check_access(addr)
         if dev := self._mmio(addr):
             dev.write32(addr, val)
         else:
             struct.pack_into('<I', self.mem, addr, u32(val))
+
+    def _check_access(self, addr: int) -> None:
+        """Enforce 4-byte alignment, and bounds for plain RAM accesses."""
+        if addr & 0x3:
+            raise MemoryFault(f"unaligned 32-bit access at 0x{addr:08X}")
+        # MMIO regions own their address space; only bounds-check main memory.
+        if self._mmio(addr) is None and not 0 <= addr <= len(self.mem) - 4:
+            raise MemoryFault(
+                f"out-of-bounds access at 0x{addr:08X} "
+                f"(memory size 0x{len(self.mem):X})"
+            )
 
     def read(self, addr: int, size: int) -> bytes:
         """Reads a raw block of bytes directly from main memory."""

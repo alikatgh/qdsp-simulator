@@ -1,8 +1,8 @@
 # tests/test_functional_core.py
-import pytest
 from dspsim import FunctionalSimulator
-from dspsim.encoder import enc_ri, enc_3r, enc_i
-from dspsim.isa import MAJ_ADDI, MAJ_ADD, MAJ_HALT
+from dspsim.encoder import enc_3r, enc_i, enc_ri
+from dspsim.isa import MAJ_ADD, MAJ_ADDI, MAJ_HALT
+
 
 def u32(v): return v & 0xFFFFFFFF
 

@@ -2,14 +2,10 @@
 
 from __future__ import annotations
 
-from .bitutil import *
+from .bitutil import u32
+
 # Import opcodes from the central ISA definition
-from .isa import (
-    MAJ_ADD, MAJ_ADDI, MAJ_SUB, MAJ_AND, MAJ_OR, MAJ_XOR,
-    MAJ_SHL, MAJ_SHR, MAJ_MUL, MAJ_MAC, MAJ_NOT,
-    MAJ_LD32, MAJ_ST32,
-    MAJ_J, MAJ_JR, MAJ_CMPI, MAJ_HALT
-)
+from .isa import MAJ_CMPI
 
 
 def _header(maj: int, pred: int | None = None, end: bool = True) -> int:
@@ -62,20 +58,22 @@ def enc_i(maj: int, imm: int, pred: int | None = None, end: bool = True) -> int:
     w |= (imm & 0x3FFF)
     return u32(w)
 
-def enc_cmpi(pdst: int, rs1: int, imm: int, cmp_code: int, pred: int | None = None, end: bool = True) -> int:
+def enc_cmpi(
+    pdst: int, rs1: int, imm: int, cmp_code: int,
+    pred: int | None = None, end: bool = True,
+) -> int:
     """
     Encode a CMPI instruction that writes a predicate result into pdst.
     Layout:
-      - header: maj MAJ_CMPI, optional predicate guard bits in header if pred is not None
-      - rd (bits 23:19) = pdst  (predicate destination index encoded here)
+      - header: maj MAJ_CMPI [31:28], P? [27], Pidx [26:25], EOP [24]
+      - rd (bits 23:19) = pdst  (predicate destination)
       - rs1 (bits 18:14) = rs1
-      - cmp_code (bits 8:5) = cmp_code
-      - imm (bits 13:0) = imm (14-bit immediate)
+      - cmp_code (bits 13:10) = comparison type
+      - imm (bits 9:0) = 10-bit signed immediate
     """
     w = _header(MAJ_CMPI, pred, end)
-    # predicate destination encoded in rd field
     w |= (pdst & 0x1F) << 19
     w |= (rs1 & 0x1F) << 14
-    w |= (imm & 0x3FFF)
-    w |= (cmp_code & 0xF) << 5
+    w |= (cmp_code & 0xF) << 10
+    w |= (imm & 0x3FF)
     return u32(w)

@@ -1,10 +1,26 @@
-# Load a value from memory, add to it, and store back
-# Let's pretend Mem[100] = 42
-ADDI r10, r0, #100    # Set up address in R10
-ADDI r1, r0, #42
-ST   r1, r10, #0      # Store 42 at address 100
+; Memory copy: copies 4 words from address 0x200 to 0x300
+; First, initialize source data
+ADDI R10, R0, #0x200   ; src base
+ADDI R11, R0, #0x300   ; dst base
 
-LD   r2, r10, #0      # Load value from Mem[100] into R2
-ADDI r3, r2, #8      # Add 8 to it
-ST   r3, r10, #4      # Store the result at Mem[104]
+; Store test values at source
+ADDI R1, R0, #0xAA
+ST [R10], R1
+ADDI R1, R0, #0xBB
+ST [R10+4], R1
+ADDI R1, R0, #0xCC
+ST [R10+8], R1
+ADDI R1, R0, #0xDD
+ST [R10+12], R1
+
+; Copy: load from src, store to dst
+LD R2, [R10]
+ST [R11], R2
+LD R2, [R10+4]
+ST [R11+4], R2
+LD R2, [R10+8]
+ST [R11+8], R2
+LD R2, [R10+12]
+ST [R11+12], R2
+
 HALT

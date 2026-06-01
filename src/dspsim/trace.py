@@ -2,6 +2,7 @@
 import json
 from typing import Optional
 
+
 class TraceSink:
     def __init__(self, path: Optional[str]=None):
         self.path = path

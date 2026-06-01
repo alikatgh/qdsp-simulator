@@ -1,6 +1,7 @@
 # inst.py
 from dataclasses import dataclass
-from typing import Optional, Dict, Any
+from typing import Any, Optional
+
 
 @dataclass
 class Inst:
@@ -13,4 +14,4 @@ class Inst:
     imm: Optional[int] = None
     pred: Optional[int] = None
     endpkt: bool = True
-    meta: Dict[str, Any] = None
+    meta: dict[str, Any] = None

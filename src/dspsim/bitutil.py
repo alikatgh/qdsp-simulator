@@ -11,3 +11,9 @@ def s32(x: int) -> int:
 
 def get_bits(x: int, hi: int, lo: int) -> int:
     return (x >> lo) & ((1 << (hi - lo + 1)) - 1)
+
+
+def sign_extend(val: int, bits: int) -> int:
+    """Sign-extend a value from `bits` width to a Python signed integer."""
+    sign_bit = 1 << (bits - 1)
+    return (val ^ sign_bit) - sign_bit
