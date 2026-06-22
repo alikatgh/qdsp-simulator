@@ -22,6 +22,13 @@ patterns section too. Keep entries to ~5 lines.
 - **Shared `MAJ=0xF` opcode.** `CMPI` and `HALT` share major opcode `0xF`.
   `HALT` is the all-zero-operand special case; anything else is `CMPI`. Both the
   decoder and the fast engine special-case this — change them together.
+  `CMPI.EQ P0,R0,#0` encodes identically to `HALT` (both are 0xF1000000);
+  the rule "rd=0, rs1=0, low14=0 ⇒ HALT" must be applied first.
+  Covered by `tests/test_isa_disambiguation.py::TestHaltCmpiDisambiguation`.
+- **Predicate registers reset to True.** All four `P0`–`P3` initialise `True`.
+  A predicated instruction guarded by a False pred is a NOP with no side
+  effects (no reg write, no mem write). Covered by
+  `tests/test_isa_disambiguation.py::TestPredicateResetState`.
 - **`ST` encodes its source in the `rd` field `[23:19]`.** Stores don't write a
   register; the "rd" slot is the data source. Hazard tracking and disassembly
   must treat `ST` specially (it reads rd, writes none).
